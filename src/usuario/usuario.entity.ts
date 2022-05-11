@@ -1,5 +1,6 @@
+import { hash } from "bcryptjs";
 import { RolEntity } from "src/rol/rol.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinTable, ManyToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name:'usuario'})
 export class UsuarioEntity {
@@ -23,5 +24,11 @@ export class UsuarioEntity {
 
     roles: RolEntity[];
 
-
+    
+    @BeforeInsert()
+    @BeforeUpdate()
+    async hashPasword() {
+        if(!this.password) return;
+        this.password = await hash(this.password, 10);
+    }
 }
